@@ -1,0 +1,40 @@
+local BULLET_SPEED = 1000 -- pixels per second
+local BULLET_LIFETIME = 2 -- seconds
+
+function init(self)
+	local rotation = go.get("main:/mainship", "rotation")
+	local dir = vmath.vector3(0, 1, 0)
+	dir = vmath.rotate(rotation, dir)
+	self.velocity = dir * BULLET_SPEED
+	local pos = go.get_position()
+	local distance = BULLET_SPEED * BULLET_LIFETIME
+	local to = pos + dir * distance
+
+	-- Start the animation and delete the bullet when it has reached its destination
+	go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, to, go.EASING_LINEAR, BULLET_LIFETIME, 0, function()
+		go.delete()
+	end)
+end
+
+function update(self, dt)
+	-- Move the bullet by its velocity
+	local pos = go.get_position()
+	pos = pos + self.velocity * dt
+	go.set_position(pos)
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("collision_response") then
+		local other_id = message.other_id
+		if other_id == hash("hole") then
+			go.delete() -- Delete the bullet when it collides with the hole
+		else
+			explode(self)
+		end
+	end
+end
+
+function explode(self)
+	-- Your explosion logic goes here
+	go.delete() -- Delete the bullet if it doesn't collide with the hole
+end

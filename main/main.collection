@@ -1,0 +1,62 @@
+name: "main"
+instances {
+  id: "background"
+  prototype: "/main/background.go"
+  position {
+    x: 1403.0
+    y: 532.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+instances {
+  id: "mainship"
+  prototype: "/main/mainship.go"
+  position {
+    x: 465.0
+    y: 199.0
+    z: 1.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+instances {
+  id: "hole"
+  prototype: "/main/hole.go"
+  position {
+    x: 1189.0
+    y: 586.0
+    z: 1.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+scale_along_z: 0
