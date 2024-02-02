@@ -2,32 +2,39 @@ local SCREEN_WIDTH = 1920
 local SCREEN_HEIGHT = 1080
 local ACCELERATION = 200
 local BULLET_SPEED = 200
-
 function init(self)
 	msg.post(".", "acquire_input_focus")
 	self.velocity = vmath.vector3()
 	self.input = vmath.vector3()
 	self.firing = false
-	self.mass = 100 -- Set an appropriate mass value for the mainship
+	self.mass = 100
 end
-
 local function calculate_gravitational_force(self, hole)
-	local G = 6.674 * math.pow(10, -11)  -- Gravitational constant
+	local G = 100
 	local distance = vmath.length(go.get_position() - hole)
-	local forceMagnitude = (G * self.mass * hole.mass) / math.pow(distance, 2)
+	print("Hole Position" , hole)
+	print(string.format("Distance to hole: %.2f", distance))
+	print(string.format("Mass of self: %.2f", self.mass))
+
+	local holeMass = 100 
+	print(string.format("Mass of hole: %.2f", holeMass))
+
+	local forceMagnitude = (G * self.mass * holeMass) / math.pow(distance, 2)
 	local forceDirection = vmath.normalize(hole - go.get_position())
+
 	print(string.format("Gravitational Force: Magnitude - %.2f, Direction - (%.2f, %.2f)", forceMagnitude, forceDirection.x, forceDirection.y))
+
 	return forceMagnitude, forceDirection
 end
-
-local function apply_gravitational_force(self, dt, hole)
-	local forceMagnitude, forceDirection = calculate_gravitational_force(self, hole)
-	local gravitationalForce = forceDirection * forceMagnitude
-	self.velocity = self.velocity + gravitationalForce * dt
-
+-- Add dt as a parameter
+local function apply_gravitational_force(self, dt, hole_position)
+	local forceMagnitude, forceDirection = calculate_gravitational_force(self, hole_position)
 	print(string.format("Gravitational Force: Magnitude - %.2f, Direction - (%.2f, %.2f)", forceMagnitude, forceDirection.x, forceDirection.y))
+	local gravitationalForce = forceDirection * forceMagnitude
+	print(gravitationalForce)
+	print("mainship velocity", self.velocity)
+	self.velocity = self.velocity + gravitationalForce * dt
 end
-
 local function move_spaceship(self, dt)
 	local steerspeed = 2.5
 	local movespeed = 250
@@ -63,31 +70,21 @@ local function move_spaceship(self, dt)
 	self.firing = false
 	self.moving = false
 end
-
 local function enforce_boundary_constraints(self)
 	local p = go.get_position()
-
-	-- Clamp X-coordinate to keep the spaceship within the horizontal bounds
 	p.x = math.max(0, math.min(SCREEN_WIDTH, p.x))
-
-	-- Clamp Y-coordinate to keep the spaceship within the vertical bounds
 	p.y = math.max(0, math.min(SCREEN_HEIGHT, p.y))
-
 	go.set_position(p)
 end
-
 local function firebullet(self)
-	-- Create a direction vector pointing upwards
 	local dir = vmath.vector3(0, 1, 0)
 	-- Create a bullet using the factory
 	local bullet = factory.create("#factory", go.get_position(), nil, {}, 1)
 end
-
 function update(self, dt)
 	move_spaceship(self, dt)
 	enforce_boundary_constraints(self)
 end
-
 function on_input(self, action_id, action)
 	if action_id == hash("up") then
 		self.input.y = 1
@@ -99,20 +96,22 @@ function on_input(self, action_id, action)
 		self.firing = true
 		firebullet(self)
 	end
-
 	if vmath.length(self.input) > 0 then
 		self.moving = true
 		self.dir = vmath.normalize(self.input)
 	end
 end
-
 function on_message(self, message_id, message, sender)
 	if message_id == hash("trigger_response") then
 		local other_id = message.other_id
 		print("Entered black hole region")
+		print("Other ID:", other_id)
 		if other_id == hash("/hole") then
-			local hole = go.get_position(other_id)
-			apply_gravitational_force(self, dt, hole)
+			local hole_position = go.get_position(other_id) 
+			-- Get the current time in seconds
+			local dt = socket.gettime()
+			-- Pass dt as an argument
+			apply_gravitational_force(self, dt, hole_position)
 		end
 	end
 end
