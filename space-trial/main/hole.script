@@ -1,0 +1,5 @@
+-- Assuming your game object has a sprite component named "sprite" and the animation is named "my_animation"
+function init(self)
+	-- Play the animation when the game starts
+	sprite.play_flipbook("#star", "star")
+end
