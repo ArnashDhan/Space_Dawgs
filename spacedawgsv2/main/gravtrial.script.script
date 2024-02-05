@@ -1,0 +1,150 @@
+
+local SCREEN_WIDTH = 1910
+local SCREEN_HEIGHT = 1070
+local ACCELERATION = 200
+local BULLET_SPEED = 200
+function init(self)
+	msg.post(".", "acquire_input_focus")
+	self.velocity = vmath.vector3()
+	self.input = vmath.vector3()
+	self.firing = false
+	self.in_gravitational_pull = true
+	self.mass = 100
+	self.initial_position = vmath.vector3(100, 100, 0)
+	self.health = 100
+	print("Initial Health: ", self.health) 
+	self.id = "mainship"
+end
+
+local function calculate_gravitational_force(self, hole)
+	local G = 50
+	local distance = vmath.length(go.get_position() - hole)
+	if distance < 5 then
+		go.set_position(self.initial_position)
+		self.health=self.health-10
+		print("Mainship crashed into the black hole! Health now: ", self.health)
+		if self.health <= 0 then
+			print("Mainship destroyed! PLAYER 2 WINS")
+			go.delete()
+		end
+		self.dir=vmath.vector3(0,1,0)
+		self.velocity = vmath.vector3()
+	end   
+	--print("Hole Position", hole)
+	--print(string.format("Distance to hole: %.2f", distance))
+	--print(string.format("Mass of self: %.2f", self.mass))
+
+	local holeMass = 10000
+	--print(string.format("Mass of hole: %.2f", holeMass))
+
+	local forceMagnitude = (G * self.mass * holeMass) / math.pow(distance, 2)
+	forceMagnitude = math.min(forceMagnitude,27500)
+
+	local forceDirection = vmath.normalize(hole - go.get_position())
+
+	--print(string.format("Gravitational Force: Magnitude - %.2f, Direction - (%.2f, %.2f)", forceMagnitude, forceDirection.x, forceDirection.y))
+
+	return forceMagnitude, forceDirection
+end
+
+local function apply_gravitational_force(self, dt, hole_position)
+	local forceMagnitude, forceDirection = calculate_gravitational_force(self, hole_position)
+	local gravitationalForce = forceDirection * forceMagnitude
+	self.velocity = self.velocity + gravitationalForce * dt
+end
+
+local function move_spaceship(self, dt)
+	local steerspeed = 2
+	local movespeed = 250
+	local acceleration = 1000 
+	local maxSpeed = 500
+	local angularDamping = 0.9  
+	self.acceleration = self.acceleration or vmath.vector3(0, 0, 0)
+	self.angularVelocity = self.angularVelocity or 0
+
+	if vmath.length_sqr(self.input) > 0 then
+		self.input = vmath.normalize(self.input)
+	end
+
+	local steeramount = -self.input.x * steerspeed
+	local speed = self.input.y * movespeed
+	-- Get the input vector in the world space
+	local rotatedInput = vmath.rotate(go.get_rotation(), self.input)
+	local rotatedAcceleration = rotatedInput * acceleration
+
+	self.velocity = self.velocity + rotatedAcceleration * dt
+
+	if vmath.length_sqr(self.velocity) > maxSpeed * maxSpeed then
+		self.velocity = vmath.normalize(self.velocity) * maxSpeed
+	end
+
+	self.angularVelocity = self.angularVelocity * angularDamping + steeramount * (1 - angularDamping)
+	go.set_rotation(go.get_rotation() * vmath.quat_rotation_z(self.angularVelocity * dt))
+
+	local pos = go.get_position()
+	pos = pos + self.velocity * dt
+	go.set_position(pos)
+
+	self.input.x = 0
+	self.input.y = 0
+	self.firing = false
+	self.moving = false
+end
+
+local function enforce_boundary_constraints(self)
+	local p = go.get_position()
+	p.x = math.max(0, math.min(SCREEN_WIDTH, p.x))
+	p.y = math.max(0, math.min(SCREEN_HEIGHT, p.y))
+	go.set_position(p)
+end
+
+local function firebullet(self)
+	local dir = vmath.vector3(0, 1, 0)
+	-- Create a bullet using the factory
+	local bullet = factory.create("#factory", go.get_position(), nil, {}, 1)
+end
+function update(self, dt)
+	move_spaceship(self, dt)
+	enforce_boundary_constraints(self)
+
+	if self.in_gravitational_pull then
+		local hole_position = vmath.vector3(960, 540, 0.1) -- Adjust as necessary
+		apply_gravitational_force(self, dt, hole_position)
+	end
+end
+
+function on_input(self, action_id, action)
+	if action_id == hash("up") then
+		self.input.y = 1
+	elseif action_id == hash("left") then
+		self.input.x = -1
+	elseif action_id == hash("right") then
+		self.input.x = 1
+	elseif action_id == hash("fire") and action.pressed then
+		self.firing = true
+		firebullet(self)
+	end
+	if vmath.length(self.input) > 0 then
+		self.moving = true
+		self.dir = vmath.normalize(self.input)
+	end
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("apply_damage") then
+		-- Extract the damage amount from the message
+		local damage_amount = message.amount
+		self.health = self.health - damage_amount
+		msg.post("main:/hud#hud.gui_script", "update_health", {spaceship = "mainship", health = self.health})
+		print("Mainship hit! Health now: ", self.health)
+
+		if self.health <= 0 then
+			print("Mainship destroyed! PLAYER 2 WINS")
+			go.delete()
+		end
+	elseif message_id == hash("trigger_response") then
+		local other_id = message.other_id
+		print("Entered black hole region")
+		print("Other ID:", other_id)
+	end
+end

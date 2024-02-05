@@ -1,0 +1,27 @@
+function init(self)
+	-- Reference to the text nodes
+	print("Hey i am working")
+	self.mainship_health_node = gui.get_node("mainship_health")
+	self.mainship2_health_node = gui.get_node("mainship2_health")
+end
+
+function update_health(self, spaceship, health)
+	print("update_health called for: " .. spaceship .. " with health: " .. tostring(health))
+	-- Update the appropriate text node with the current health
+	if spaceship == "mainship" then
+		gui.set_text(self.mainship_health_node, tostring(health))
+	elseif spaceship == "mainship2" then
+		gui.set_text(self.mainship2_health_node, tostring(health))
+	else
+		print("Error: Unknown spaceship ID received in update_health")
+	end
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("update_health") then
+		print("Received message to update health for " .. message.spaceship)
+		update_health(self, message.spaceship, message.health)
+	else
+		print("Received unexpected message:", message_id)
+	end
+end
