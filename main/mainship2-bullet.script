@@ -1,0 +1,79 @@
+local BULLET_SPEED = 1000 -- pixels per second
+local BULLET_LIFETIME = 2 -- seconds
+local DAMAGE_AMOUNT = 5
+
+local hole_mass = 10000 
+
+local screen_width = 1920
+local screen_height = 1080
+
+function init(self)
+	local rotation = go.get("main:/mainship2", "rotation")
+	local dir = vmath.vector3(0, 1, 0)
+	dir = vmath.rotate(rotation, dir)
+	self.velocity = dir * BULLET_SPEED
+	local pos = go.get_position()
+	local distance = BULLET_SPEED * BULLET_LIFETIME
+	local to = pos + dir * distance
+
+	-- Set the mass attribute for the bullet
+	self.mass = 1 -- You can adjust this value based on your game's needs
+
+	-- Start the animation and delete the bullet when it has reached its destination
+	go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, to, go.EASING_LINEAR, BULLET_LIFETIME, 0, function()
+		go.delete()
+	end)
+end
+
+function update_gravity(self, dt)
+	local G = 6.67430e-11  -- Gravitational constant
+	local hole_pos = go.get_position("/hole")
+	local bullet_pos = go.get_position()
+
+	local displacement = vmath.vector3(hole_pos.x - bullet_pos.x, hole_pos.y - bullet_pos.y, 0)
+	local distance = vmath.length(displacement)
+
+	if distance > 0 then
+		local force_magnitude = (G * self.mass * hole_mass) / (distance * distance)
+		local force_direction = vmath.normalize(displacement)
+
+		-- Update the velocity based on the gravitational force using element-wise multiplication
+		self.velocity = vmath.vector3(
+		self.velocity.x + force_direction.x * force_magnitude,
+		self.velocity.y + force_direction.y * force_magnitude,
+		self.velocity.z + force_direction.z * force_magnitude
+	)
+end
+end
+
+function update(self, dt)
+	update_gravity(self, dt)
+
+	-- Move the bullet by its velocity
+	local pos = go.get_position()
+	pos = pos + self.velocity * dt
+	go.set_position(pos)
+
+	-- Check if the bullet is outside the screen and delete it
+	if pos.x < 0 or pos.x > screen_width or pos.y < 0 or pos.y > screen_height then
+		go.delete()
+	end
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("collision_response") then
+		if message.group == hash("mainship") then
+			-- Send a message to mainship to apply damage
+			msg.post(message.other_id, "apply_damage", {amount = DAMAGE_AMOUNT})
+			go.delete() -- Delete the bullet after applying damage
+		end
+	elseif message_id == hash("trigger_response") then
+		print("Bullet in the black hole region")
+		go.delete()
+	end
+end
+
+function explode(self)
+-- Your explosion logic goes here
+go.delete()
+end

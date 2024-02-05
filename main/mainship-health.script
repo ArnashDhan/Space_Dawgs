@@ -1,0 +1,23 @@
+function init(self)
+	self.full_scale = go.get_scale()
+	print("Health bar initialized with full scale: ", self.full_scale)
+end
+
+function update_health(self, new_health, max_health)
+	local health_percentage = new_health / max_health
+	local new_scale = vmath.vector3(self.full_scale.x * health_percentage, self.full_scale.y, self.full_scale.z)
+	if new_scale.x <= 0 then
+		go.delete()
+	else
+		go.set_scale(new_scale) -- This will set the scale on the current game object
+		print("Health bar updated to new scale: ", new_scale)
+	end	
+end
+
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("update_health") then
+		print("Health bar received update_health message")
+		update_health(self, message.health, message.max_health)
+	end
+end

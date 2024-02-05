@@ -1,0 +1,64 @@
+local function load_menu(self)
+	msg.post("loader#mainmenu", "load")
+	msg.post("loader#mainmenu", "enable")
+end
+
+local function unload_menu(self)
+	msg.post("loader#mainmenu","unload")
+end
+
+local function unload_game(self)
+	print("unloaded game")
+	msg.post("loader#game","unload")
+end
+
+local function load_omega(self)
+	msg.post("loader#omega", "load")
+	msg.post("loader#omega", "enable")
+end
+
+local function load_alpha(self)
+	print("loaded alpha")
+	msg.post("loader#alpha", "load")
+	msg.post("loader#alpha", "enable")
+end
+
+local function unload_omega(self)
+	print("unloaded omega")
+	msg.post("loader#omega", "unload")
+end
+
+local function unload_alpha(self)
+	print("unloaded alpha")
+	msg.post("loader#alpha", "unload")
+end
+	
+local function load_main(self)
+	msg.post("loader#game", "load")
+	msg.post("loader#game", "enable")
+end
+
+function init(self)
+	msg.post(".", "acquire_input_focus")
+	load_menu(self)
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("start") then
+		unload_menu(self)
+		load_main(self)
+	elseif message_id == hash("omega") then
+		print("omega")
+		unload_game(self)
+		load_omega(self)
+	elseif message_id == hash("alpha") then
+		unload_game(self)
+		load_alpha(self)
+	elseif message_id == hash("aplay") then
+		unload_alpha(self)
+		load_main(self)	
+	elseif message_id == hash("oplay") then
+		unload_omega(self)
+		load_main(self)		
+	end		
+end

@@ -1,37 +1,17 @@
 name: "main"
 instances {
-  id: "background"
-  prototype: "/main/background.go"
-  position {
-    x: 1403.0
-    y: 532.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
-}
-instances {
   id: "mainship"
   prototype: "/main/mainship.go"
   position {
-    x: 465.0
-    y: 199.0
-    z: 1.0
+    x: 380.0
+    y: 540.0
+    z: 0.1
   }
   rotation {
     x: 0.0
     y: 0.0
-    z: 0.0
-    w: 1.0
+    z: 0.70710677
+    w: -0.70710677
   }
   scale3 {
     x: 1.0
@@ -43,9 +23,129 @@ instances {
   id: "hole"
   prototype: "/main/hole.go"
   position {
-    x: 1189.0
-    y: 586.0
+    x: 960.0
+    y: 540.0
+    z: 0.1
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
     z: 1.0
+  }
+}
+instances {
+  id: "background"
+  prototype: "/main/background.go"
+  position {
+    x: 960.0
+    y: 540.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+instances {
+  id: "mainship2"
+  prototype: "/main/mainship2.go"
+  position {
+    x: 1540.0
+    y: 540.0
+    z: 0.1
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.70710677
+    w: 0.70710677
+  }
+  scale3 {
+    x: 0.6
+    y: 0.6
+    z: 0.6
+  }
+}
+instances {
+  id: "hud"
+  prototype: "/main/hud.go"
+  position {
+    x: 111.0
+    y: 142.0
+    z: 0.5
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 0.88616
+    y: 0.868862
+    z: 1.14
+  }
+}
+instances {
+  id: "mainship-health"
+  prototype: "/main/mainship-health.go"
+  position {
+    x: 200.0
+    y: 912.0
+    z: 0.2
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+instances {
+  id: "mainship2-health"
+  prototype: "/main/mainship2-health.go"
+  position {
+    x: 1720.0
+    y: 912.0
+    z: 0.2
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+instances {
+  id: "soundfx"
+  prototype: "/main/soundfx.go"
+  position {
+    x: 0.0
+    y: 0.0
+    z: 0.0
   }
   rotation {
     x: 0.0

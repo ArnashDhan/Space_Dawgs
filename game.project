@@ -1,0 +1,30 @@
+[bootstrap]
+main_collection = /main/start.collectionc
+
+[script]
+shared_state = 1
+
+[display]
+width = 1920
+height = 1080
+fullscreen = 0
+
+[android]
+input_method = HiddenInputField
+
+[project]
+title = space-dawgs
+
+[physics]
+gravity_y = 0.0
+
+[windows]
+app_icon = /assets/space_logo.ico
+
+[library]
+include_dirs = 
+
+[html5]
+splash_image = /assets/space_logo.png
+scale_mode = fit
+

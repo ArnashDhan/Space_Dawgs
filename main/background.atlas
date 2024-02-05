@@ -1,9 +1,21 @@
 images {
-  image: "/assets/background/Starfield_05-1024x1024.png"
+  image: "/main/blackhole.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
-  image: "/main/blackhole.png"
+  image: "/main/Space Background.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/assets/bg_for_play (1).png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/assets/mainmenubg.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/assets/space_logo.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 margin: 0

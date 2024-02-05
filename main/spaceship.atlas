@@ -1,37 +1,9 @@
 images {
-  image: "/assets/main ship/Main Ship - Base - Damaged.png"
+  image: "/assets/main ship/ship_L.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
-  image: "/assets/main ship/Main Ship - Base - Full health.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-}
-images {
-  image: "/assets/main ship/Main Ship - Base - Slight damage.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-}
-images {
-  image: "/assets/main ship/Main Ship - Base - Very damaged.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-}
-images {
-  image: "/assets/main ship/Main Ship - Engines - Base Engine - Idle.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-}
-images {
-  image: "/assets/main ship/Main Ship - Engines - Base Engine - Powering.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-}
-images {
-  image: "/assets/main ship/Main Ship - Engines - Base Engine - Spritesheet.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-}
-images {
-  image: "/assets/main ship/Main Ship - Engines - Base Engine.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-}
-images {
-  image: "/assets/background/Starfield_05-1024x1024.png"
+  image: "/assets/effect_pink.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 margin: 0
